@@ -12,7 +12,7 @@ Financial security and fraud prevention are of utmost importance for any company
 
 **Proposed Solution**** **
 
-The proposed implementation will enable role-based permissions in the application and will help in having a verification by higher authorities for all the critical transactions. This will enable multiple Officers in the organization having different roles, that will be validating documents for clients, loans, saving accounts, groups, centers before approval.
+The proposed implementation will enable role-based permissions in the application and will help in having a verification by higher authorities for all the critical transactions. This will enable multiple officers in the organization having different roles, that will be validating documents for clients, loans, saving accounts, groups, centers before approval.
 
 **Benefits**
 
@@ -38,9 +38,79 @@ These are the goals of the project which would help reduce the risk of fraudulen
 
 * Center activation, updating, deletion, closing needs to be implemented.
 
+* Filter option in client list, group list, center list based on activated, deactivated needs to be implemented for ease in finding deactivated or activated entities.This feature is helpful in case a officer is assigned a job of activating clients, centers, groups.
+
+**Technical Implementation details-**
+
+* **Implementation of Role based permissions-**
+
+    * At first, Some new roles need to be defined and based on role permissions should be assigned using Restful API - 
+
+        * Create new roles - > Update a role’s permission - > Create users with different roles. 
+
+        * Create new roles -  POST [https://DomainName/api/v1/roles](https://domainname/api/v1/roles) 
+
+        * Create new user and assign roles - POST https://DomainName/api/v1/users
+
+    * On the Dashboard Activity a rest API for getting user/staff permissions will be called and the permissions will be stored in the SQLite table by 
+
+        * Retrieve user roles - > Retrieve roles permissions
+
+        * Retrieve user - GET https://DomainName/api/v1/users/{userId} 
+
+        * API endpoint to Retrieve a roles permissions - 
+
+GET [https://DomainName/api/v1/roles/{roleId}/permissions](https://domainname/api/v1/roles/%7BroleId%7D/permissions)
+
+    * Data Manager class for managing permissions API, DataManagerPermissions needs to be implemented that will have methods that in response get API observable response using retrofit2.
+
+    * PermissionService - Interface for retrofit GET, POST or PUT methods depending upon different APIs.
+
+	
+
+	Retrieve a user - 
+
+@GET("suburl here")
+
+	Observable<StaffData> getUserDetails(@Query("userId") int userId);
+
+	
+
+	Retrieve a user’s role permissions -
+
+	@GET("suburl here")
+
+	Observable<PermissionData> getRolePermissions(@Query("roleId") int roleId);
+
+    * Based on the permissions, various UI elements will be disabled/enabled or visible/gone.
+
+* **Addition of sub-modules in Client, Loan, Group, Center and Savings -**
+
+    * Activate/Approve - Activation/Approving is already implemented in all the modules, but It is required to sync role based permissions. Activate checkbox/button will be visible depending upon permissions assigned to a particular user.
+
+    * Updating, deleting, rejecting, reactivating, closing, withdrawing, rescheduling,- These are the new modules to be implemented along with rest API calls. All the sub modules will have similar architecture and will have just some design and implementation changes on UI and attributes.
+
+        * Data Manager classes for client, center, group, loan and savings will have more methods that in response provide API observable response using retrofit2.
+
+        * Service classes for client, center, group, loan, savings - Interface for retrofit GET, POST or PUT methods depending upon different APIs.
+
+        * Creation of object POJO classes for getting response from end APIs will be developed for all the sub modules.
+
+        * Toggle buttons and other UI elements will be implemented to enable updating, deleting, rejecting, reactivating, closing, withdrawing, rescheduling.
+
+        * Testing of these sub modules with various users with different roles will be tested.
+
+* **Filter list in client, center, group list **
+
+    * End api calls has already been implemented to get the client, center and group list, To provide filtering functionality a spinner will be implemented that will have activated/approved, deactivated/not approved and all options and based on this we will send a parameter to the API and the list will be sorted.
+
+    * This need some changes in Service classes and some extra parameters will be send based the case, like client_status, group_status, center_status can be used with value activated, rejected, deactivated, etc.
+
+    * This needs a spinner in all the 3 fragments CenterListFragment, ClientListFragment, GroupListFragment and some slight changes in the view classes to pass an extra parameter to the service interface.
+
 **Project Timeline** **Official Coding Period**
 
-GSOC officially provides 12 weeks to code and work on the project. In every 2 weeks, I will get mentors feedback on the code quality and design architecture as well as on UI/UX. In all the new and existing modules I will work with service interfaces, data-tables, model & presenter classes to implement role-based permissions wherever it’s needed and end API calls for some specific features. Writing documentation and testing with mock data-table providers will be a necessary activity in each week.
+GSOC officially provides 12 weeks to code and work on the project. In every 2 weeks, I will get mentors feedback on the code quality and design architecture as well as on UI/UX. In all the new and existing modules I will work with service interfaces, data-manager, model & presenter classes to implement role-based permissions wherever it’s needed and end API calls for some specific features. Writing documentation and testing with mock data-manager providers will be a necessary activity in each week.
 
 * **Week 1 ( 30th May - 5th June )**
 
@@ -104,19 +174,27 @@ GSOC officially provides 12 weeks to code and work on the project. In every 2 we
 
     * Implementation of approving, rejecting, withdrawal, and closing of Saving Application. 
 
-* **Week 11 (9th August - ** **15th August )**
-
     * Writing documentation for saving module.
 
     * Writing unit test cases for saving module.
 
     * Testing and debugging of Saving module along with all the other modules.
 
+* **Week 11 (9th August - ** **15th August )**
+
+    * Implementation of filter feature in client list, group list, center list
+
+    * Writing and improving documentation
+
+    * Testing and debugging with different cases
+
+    * Updating unit test cases
+
 * **Week 12 ( 15th August - 21st August ) Final Evaluation Week**
 
     * Time to clear backlogs, implement feedback/changes proposed by mentors.
 
-    * Improvements in documentation and test cases.
+    * Improvements in documentation and test cases of all the implemented modules.
 
     * Testing of the whole app with different role-based permissions and debugging.
 
@@ -158,7 +236,7 @@ I am seeking to start a company on my own and contribute to the community.I aspi
 
 * **Please share any links to source codes you have written or websites you have built:**
 
-I have developed apps for some real world problems that are live on play store. I have made a lot of my projects open source to guide my juniors and classmates about the way I learn and implement.
+I have developed apps for some real world problems that are live on play store. I am also an avid Open Source lover and the source code to most of my apps can be easily found on my GitHub profile which help me to guide my juniors and classmates about the way I learn and implement.
 
 Github profile link - [https://github.com/meghalagrawal](https://github.com/meghalagrawal)
 
